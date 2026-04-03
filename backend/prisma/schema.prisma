@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Party {
+  id                    String     @id
+  party_name            String
+  host_id               Int?
+  current_queue_item_id Int?
+  playback_position_ms  Int        @default(0)
+  is_paused             Int        @default(1)
+  has_started           Int        @default(0)
+  leaderboard           String     @default("[]")
+  max_song_duration_s   Int        @default(600)
+  max_queue_size        Int        @default(100)
+  max_songs_per_user    Int        @default(0)
+  created_at            BigInt
+
+  host       Session?   @relation("PartyHost", fields: [host_id], references: [id])
+  sessions   Session[]  @relation("PartySessions")
+  queue_items QueueItem[]
+}
+
+model Session {
+  id           Int        @id @default(autoincrement())
+  token        String     @unique
+  name         String
+  party_id     String
+  peanut_score Int        @default(0)
+  created_at   BigInt
+
+  party          Party      @relation("PartySessions", fields: [party_id], references: [id])
+  hosted_parties Party[]    @relation("PartyHost")
+  queue_items    QueueItem[] @relation("AddedBy")
+  reactions      Reaction[]
+}
+
+model Song {
+  id              Int        @id @default(autoincrement())
+  audio_path      String?
+  image_path      String?
+  preview_url     String? // Spotify ~30s preview; set on add or resolved via API
+  song_name       String
+  artist_name     String
+  download_status String
+  song_length     Float?
+  created_at      BigInt
+
+  queue_items QueueItem[]
+}
+
+model QueueItem {
+  id          Int        @id @default(autoincrement())
+  party_id    String
+  song_id     Int
+  position    Int
+  added_by    Int
+  likes_count Int        @default(0)
+  shits_count Int        @default(0)
+  created_at  BigInt
+
+  party     Party      @relation(fields: [party_id], references: [id])
+  song      Song       @relation(fields: [song_id], references: [id])
+  added_by_session Session @relation("AddedBy", fields: [added_by], references: [id])
+  reactions Reaction[]
+
+  @@unique([party_id, position])
+}
+
+model Reaction {
+  id            Int    @id @default(autoincrement())
+  reaction_type String
+  reacted_by    Int
+  queue_item_id Int
+  created_at    BigInt
+
+  session    Session   @relation(fields: [reacted_by], references: [id])
+  queue_item QueueItem @relation(fields: [queue_item_id], references: [id])
+}

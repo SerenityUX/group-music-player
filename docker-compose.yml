@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    expose:
+      - "3000"
+    environment:
+      - PORT=3000
+      - CORS_ORIGIN=*
+      - DATABASE_URL=file:./dev.db
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+    restart: unless-stopped
