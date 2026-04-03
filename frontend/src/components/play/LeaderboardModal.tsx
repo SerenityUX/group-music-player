@@ -47,7 +47,7 @@ export default function LeaderboardModal({ partyId, members, onClose }: Leaderbo
         return (
           <div
             key={m.id}
-            className="rounded-lg border-b border-app-border py-3 last:border-0"
+            className="rounded-lg py-3"
             style={isWinner ? { backgroundColor: "#EAF9EE" } : undefined}
           >
             <div className="flex items-center gap-3 px-2">
