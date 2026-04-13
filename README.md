@@ -1,6 +1,8 @@
-# Nero Party
+# Music Player 
 
-A real-time listening party app. Create a party, invite friends via QR code or join code, queue up songs, listen together, react, and crown a winner.
+A real-time listening app. Create a party, invite friends via QR code or join code, queue up songs, listen together, react, and crown a winner.
+
+Designed for road trips
 
 ## Prerequisites
 
